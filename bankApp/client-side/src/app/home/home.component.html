@@ -1,0 +1,18 @@
+<h2 class="text text-center">Clients Home List</h2>
+<table id="ang-table" class="table table-dark">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Client Name</th>               
+                <th>Phone</th>                                                        
+            </tr>
+        </thead>
+        <tbody>                      
+            <tr *ngFor="let client1 of clientsHomeArray">            
+                <td>{{client1.rec_id}}</td>
+                <td>{{client1.client_name}}</td>                                      
+                <td>{{client1.phone}}</td>                                    
+            </tr>
+        </tbody>
+    </table>
+

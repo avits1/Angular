@@ -1,0 +1,38 @@
+
+<h2 class="text text-center">Add/Update Account</h2>
+
+<form action="">
+    <div class="form-group">
+        <label for="bank">Bank</label>
+        <input type="number" [(ngModel)]="bank" name="bank"  placeholder="Bank Number .." class="form-control">
+    </div>
+    
+    <div class="form-group">
+        <label for="branch">Branch</label>
+        <input type="number" [(ngModel)]="branch" name="branch"  placeholder="Branch Number .." class="form-control">
+    </div>
+    
+    <div class="form-group">
+        <label for="acc_num">Account</label>
+        <input type="text" [(ngModel)]="acc_num" name="acc_num"  placeholder="Account .." class="form-control">
+    </div>
+    
+    <div class="form-group">
+        <label for="amount">Amount</label>
+        <input type="number" [(ngModel)]="amount" name="amount" placeholder="Amount .." class="form-control">
+    </div>
+
+    <div class="form-group">
+        <label for="credit">Credit</label>
+        <input type="number" [(ngModel)]="credit" name="credit" placeholder="Credit .." class="form-control">
+    </div>
+
+    <input type="hidden" [(ngModel)]="rec_id" name="rec_id" class="form-control">
+
+    <div class="btn btn-primary mx-2" (click)="saveAccount()">Save</div>
+    <div class="btn btn-primary mx-2" (click)="updateAccount()">Update</div>
+    <div class="btn btn-danger mx-2" (click)="clearForm()">Clear</div>
+    
+</form>
+
+

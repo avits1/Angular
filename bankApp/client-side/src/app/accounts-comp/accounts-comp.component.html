@@ -1,0 +1,18 @@
+    
+    <span class="display-4">Accounts List</span>
+    <div class="row">
+        <!-- <div class="col-md-12">   -->            
+            <div class="card col-md-3 mt-2" *ngFor="let account1 of accountsArray; let i = index">
+            <!-- <div class="col-md-3 mt-1" *ngFor="let account1 of accountsArray; let i = index">                 -->
+                <div>Account ID: {{account1.id}}</div>
+                <div>Bank: {{account1.bank}}</div>
+                <div>Branch: {{account1.branch}}</div>
+                <div>Account Num: {{account1.acc_num}}</div>
+                <div>Amount: {{account1.amount}}</div>
+                <div>Credit: {{account1.credit}}</div>
+                <div class="btn btn-success my-1" routerLink="/account-form/{{account1.id}}">Edit</div>
+                <div class="btn btn-danger my-1" (click)="delAccount(account1.id)">Delete</div>
+            </div>                
+         <!-- END col-md-12 -->
+    </div>    
+
