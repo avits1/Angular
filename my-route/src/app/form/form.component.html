@@ -1,0 +1,37 @@
+<form>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" [(ngModel)]="name" name="name" placeholder="Name" class="form-control" />
+            </div>
+        </div><!--  end col-md-4 -->
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>EMail</label>
+                <input type="email" [(ngModel)]="email" name="email" placeholder="EMail" class="form-control" />
+            </div>
+        </div><!--  end col-md-4 -->
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="text" [(ngModel)]="phone" id="phone" name="phone" placeholder="Phone"
+                    class="form-control" />
+            </div>
+        </div><!--  end col-md-4 -->
+    </div> <!--  end row -->
+   
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Text </label> &nbsp; &nbsp;
+            <i class="fas fa-pencil-alt prefix"></i>
+            <textarea class="form-control rounded-0" rows="4" cols="50" id="msgs" [(ngModel)]="text_msg" name="text_msg"
+                placeholder="Msg Text">
+            </textarea>
+        </div>
+    </div><!--  end col-md-6 -->
+    <!-- <br> -->
+    <div class="btn btn-success my-2" (click)="sendMsg()">Send</div>
+    <!-- <div>{{ state.name }}</div> -->
+</form>
+<br>

@@ -1,0 +1,35 @@
+
+<div class="row">
+    <h3>Movies</h3>
+    <div class="col-md-12">
+    <label>Movie Name:</label>
+    <br>
+    <input type="text" name="state.search" [(ngModel)]="state.search" placeholder="Search.." >
+    <br>
+    <div class="btn btn-success my-2" (click)="searchMovie()">Search</div>
+    </div>
+    <hr>
+    <div class="col-md-12">
+            movies array len: {{this.state.movies.length}}
+            <!-- <tr *ngFor="let user1 of usersLocal; let i = index">            
+                    <td>{{user1.id}}</td>
+                    <td>{{user1.name}}</td>                      
+                    <td>{{user1.age}}</td>
+                    <td>{{user1.phone}}</td>                      
+                    <td>{{(user1.gender == 1) ? "Male":"Female"}}</td>
+                    <td>{{ (user1.smoking) ? "Yes":"No"}}</td>                               
+                    <td routerLink="/add-form/{{user1.id}}"><i class="fa fa-edit"></i></td>                   
+                    <td (click)="delUser(user1.id)"><i class="fa fa-trash"></i></td>               
+                </tr> -->
+
+                <!-- <div className="card col-md-4 mt-3" onClick={this.props.showPopup.bind(this, this.state.movie.imdbID)}>
+                        <img src={this.state.movie.Poster} />
+                        <div>Title: {this.state.movie.Title}</div>
+                        <div>Year: {this.state.movie.Year}</div>
+                        <div>Type: {this.state.movie.Type}</div>
+                        Bl bla
+                    </div> -->
+
+    </div>
+    
+</div>

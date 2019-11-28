@@ -1,0 +1,23 @@
+
+<div class="row">
+    <div class="users_image col-md-4">
+        <img  src="../../assets/images/PicGibush 066.jpg" alt="users gibush image">       
+    </div><!--  end col-md-4 -->
+    <div class="col-md-8">
+    </div><!--  end col-md-8 -->
+</div>
+<hr>
+<!-- TODO: form and table via router-outlet , including data transfer .. -->
+
+<h2 class="text text-center">Users1</h2>
+<div class="row">
+    <div class="col-md-7">                           
+    <app-table [usersArray]="users1" (messageEvent)="deleteUser($event)"></app-table>       
+    </div><!--  end col-md-7 -->         
+    <div class="col-md-1">          
+    </div><!--  end col-md-1 -->
+    <div class="col-md-4">
+    <app-add-form (messageEvent)="addUser($event)"></app-add-form>   
+    </div><!--  end col-md-4 -->
+</div> <!--  end row -->
+<br>
