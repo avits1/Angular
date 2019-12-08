@@ -1,0 +1,69 @@
+NODE npm &  Angular Commands:
+--------------------------------------
+
+npm -g install typescript   -  Typescript Install
+
+[npm Vs npx]
+
+[ES5 , ES6]
+
+
+Node JS
+-----------
+node node.js - activate node js server
+
+npm -g install http
+
+npm link [modoule-name] => links or install the missing modoule
+
+[node express]  / [node express generator]
+
+npm install -g express-generator
+
+npm audit fix - some fix ..
+
+express <myproj> - create express project in <myproj> folder
+
+cd ./myproj
+
+npm install- create local nodejs project
+
+npm start - run local nodejs project (on localhost:3000 or Other ..)
+
+npm install -g nodemon
+
+npx nodemon  - run node server by nodemon
+
+[postaman download]
+
+[node express session] 
+[express session memorystore] 
+
+npm install -g express-sesion
+
+
+Angular:
+-------
+
+npm install -g @angular/cli
+
+ng new my-dream-app (or: my-first-angular, etc..)
+
+cd my-dream-app
+
+ng serve [--open]
+
+ng generate component comp-name - add new angular component
+ng g c comp-name (in short.. )
+
+ng g service serv-name - add new angular service
+
+DB - MySql + MongoDB + Mongoose:
+------------------------------------------
+
+npm i -g mysql
+
+npm i -g mongodb
+
+npm i -g mongoose
+

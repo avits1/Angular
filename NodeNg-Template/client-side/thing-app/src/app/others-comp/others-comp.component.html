@@ -1,0 +1,18 @@
+    
+    <span class="display-4">Others List</span>
+    <div class="row">
+        <!-- <div class="col-md-12">   -->            
+            <div class="card col-md-3 mt-2" *ngFor="let other1 of othersArray; let i = index">
+            <!-- <div class="col-md-3 mt-1" *ngFor="let other1 of othersArray; let i = index">                 -->
+                <div>Other ID: {{other1.id}}</div>
+                <div>Bank: {{other1.bank}}</div>
+                <div>Branch: {{other1.branch}}</div>
+                <div>Other Num: {{other1.acc_num}}</div>
+                <div>Amount: {{other1.amount}}</div>
+                <div>Credit: {{other1.credit}}</div>
+                <div class="btn btn-success my-1" routerLink="/other-form/{{other1.id}}">Edit</div>
+                <div class="btn btn-danger my-1" (click)="delOther(other1.id)">Delete</div>
+            </div>                
+         <!-- END col-md-12 -->
+    </div>    
+

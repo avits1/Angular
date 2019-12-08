@@ -1,0 +1,48 @@
+echo "# MyGit02" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/avits1/MyGit02.git
+git push -u origin master
+
+…or create a new repository on the command line:
+
+echo "# Angular" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/avits1/Angular.git
+git push -u origin master
+
+…or push an existing repository from the command line:
+
+git remote add origin https://github.com/avits1/Angular.git
+git push -u origin master
+
+first pull command:
+-----------------------
+
+Merging combines your local changes with changes made by others.
+
+Typically, you'd merge a remote-tracking branch (i.e., a branch fetched from a remote repository) with your local branch:
+
+$ git merge remotename/branchname
+# Merges updates made online with your local work
+
+-------
+
+List all files in git Repo / already committed:
+> git ls-tree -r master --name-only
+
+List of all files ever existed:
+> git log --pretty=format: --name-only --diff-filter=A  | sort -u
+
+apply git config on .gitignore (before commit)
+> git config --global core.excludesfile ~/.gitignore
+(see gitignore syntex:  https://www.jamescoyle.net/how-to/1094-ignoring-files-in-git-with-gitignore)
+
+uncommoit to last or chosen commiit:
+> git reset --soft [HEAD / 123abc .. ]
+OR:
+> git reset  [HEAD / 123abc .. ]
+
