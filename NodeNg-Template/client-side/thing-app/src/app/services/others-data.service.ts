@@ -6,49 +6,46 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class OthersDataService {
 
+  // 1. Shorter Imp of Observable:  
+  private others_obs = new BehaviorSubject([]);
+  public  others_to_watch = this.others_obs.asObservable();
+  
+  // 2. other ways:
+  // From: https://angularfirebase.com/lessons/sharing-data-between-angular-components-four-methods/
+
   // Observeble Service Message:
-  private msgOthersSource = new BehaviorSubject('DEFAULT'); // default message
-  currOtherMsg = this.msgOthersSource.asObservable();
+  // private msgOthersSource = new BehaviorSubject('DEFAULT'); // default message
+  // currOtherMsg = this.msgOthersSource.asObservable();
 
-  changeOtherMessage(other_msg: string) {
-    this.msgOthersSource.next(other_msg)
-  }
+  // changeOtherMessage(other_msg: string) {
+  //   this.msgOthersSource.next(other_msg)
+  // }
 
-  newMsgForOthers(msg) {    
-    this.changeOtherMessage(msg);    
-  }
+  // newMsgForOthers(msg) {    
+  //   this.changeOtherMessage(msg);    
+  // }
+  ////////////////////////////
 
-  unattached_others_url = "http://localhost:3000/others/unattached"; // GET
-  get_others_url = "http://localhost:3000/others"; // GET
-  delete_other_url = "http://localhost:3000/others/delete"; // DELETE
-  insert_other_url = "http://localhost:3000/others/insert"; // PUT  
-  update_other_url = "http://localhost:3000/others/update"; // POST
+  unattached_others_url = "http://localhost:3000/others/unattached"; // GET  
+  others_url = "http://localhost:3000/others/"; // GET + POST + PUT + DELETE
 
   others = [];
-  unattached_others = [];
+  // unattached_others = [];
 
   constructor() { }
-
-  getUnattachedOthers(){
-    return this.unattached_others;
-  }
-  
+    
   fetchUnattachedOthers(my_other){
     let temp_url = this.unattached_others_url + "/?other_id=" + my_other;
-    fetch(temp_url, {
-    // fetch(this.unattached_others_url, {      
-      method: "GET",
-      // body: JSON.stringify({other_id: my_other}),      
+    fetch(temp_url, {    
+      method: "GET",      
       headers: {
           "Content-Type": "application/json"
       } 
     })
     .then((res) => { return res.json(); })
     .then((res) => {    
-        this.unattached_others = res.data;
-        // console.log("fetchUnattachedOthers - fetch retrived un attached others:");
-        // console.log(this.unattached_others);
-        this.newMsgForOthers("UNATTACHED ACC. UPDATED"); // un-attached others are updated
+        // this.unattached_others = res.data;        
+        this.others_obs.next(res.data); // = this.unattached_others
     })
     .catch(err => {
         console.log("fetchUnattachedOthers - fetch Error occured !");
@@ -58,7 +55,7 @@ export class OthersDataService {
 
 
   delOtherData(aid) {        
-    fetch(this.delete_other_url, {
+    fetch(this.others_url, {
         method: "DELETE",
         body: JSON.stringify({other_id: aid}),
         headers: {
@@ -66,12 +63,9 @@ export class OthersDataService {
         } 
       })
       .then((res) => { return res.json(); })
-      .then((res) => {    
-          // let del_msg = res.data;
-          // console.log("delOtherData - fetch deleted other with Id:" + aid);
-          // console.log(del_msg);
+      .then((res) => {              
           this.fetchAllOthers();          
-          this.fetchUnattachedOthers(0);
+          this.fetchUnattachedOthers(0); // for updating select/DDL
       })
       .catch(err => {
           console.log("delOtherData - fetch delete Error occured !");
@@ -79,18 +73,13 @@ export class OthersDataService {
       })
   }
 
-  getAllOthers(){    
-    return this.others;
-  }
-    
+      
   fetchAllOthers(){
-    fetch(this.get_others_url)
+    fetch(this.others_url)
         .then((res) => { return res.json(); })
         .then((res) => {    
-            this.others = res.data;
-            // console.log("fetchAllOthers - fetch retrived all others:");
-            // console.log(this.others);
-            this.newMsgForOthers("OTHERS-TABLE UPDATED"); // others are updated            
+            this.others = res.data;            
+            this.others_obs.next(res.data); // = this.others
         })
         .catch(err => {
             console.log("fetchAllOthers - fetch Error occured !");
@@ -109,10 +98,8 @@ export class OthersDataService {
     return null;
   }
   
-  addOtherData(new_other) {                
-    // console.log("addOtherData - started for other: " + new_other.bank
-    //        + " | " + new_other.branch + " | " +  new_other.acc_num);
-    fetch(this.insert_other_url, {
+  addOtherData(new_other) {                    
+    fetch(this.others_url, {
       method: "POST",  
       body: JSON.stringify({
           id: 0, // Auto INC by DB !
@@ -126,12 +113,9 @@ export class OthersDataService {
       } 
     })
     .then((res) => { return res.json(); })
-    .then((res) => {    
-        // let add_msg = res.message;
-        // console.log("addOtherData - fetch added new other");
-        // console.log(add_msg);
+    .then((res) => {            
         this.fetchAllOthers();        
-        this.fetchUnattachedOthers(0);
+        this.fetchUnattachedOthers(0); // for updating select/DDL
     })
     .catch(err => {
         console.log("addOtherData - fetch add Error occured !");
@@ -142,7 +126,7 @@ export class OthersDataService {
   
   updateOtherData(other_data) {    
     
-    fetch(this.update_other_url, {
+    fetch(this.others_url, {
       method: "PUT",  
       body: JSON.stringify({
         id: other_data.id, 
@@ -156,11 +140,9 @@ export class OthersDataService {
       } 
     })
     .then((res) => { return res.json(); })
-    .then((res) => {            
-        // let update_msg = res.message;        
-        // console.log(update_msg);
+    .then((res) => {                    
         this.fetchAllOthers();        
-        this.fetchUnattachedOthers(0);
+        this.fetchUnattachedOthers(0); // for updating select/DDL
     })
     .catch(err => {
         console.log("updateOtherData - fetch update Error occured !");

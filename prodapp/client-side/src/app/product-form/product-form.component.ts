@@ -26,11 +26,9 @@ export class ProductFormComponent implements OnInit {
     this.updated_id = this.route.snapshot.paramMap.get('prod_id');         
     if (this.updated_id != null) {
       this.product_id = parseInt(this.updated_id); // also: Number()   
-    }        
-    // console.log("updated_id: " + this.updated_id + " , product_id: " + this.product_id); // TEST
+    }            
     if (this.product_id > 0) {
-      let to_update = this.productService.getProductByID(this.product_id);
-      // console.log(to_update); // TEST
+      let to_update = this.productService.getProductByID(this.product_id);      
       if (to_update == null) {
         console.log("get product details by its ID - Failed !");
         return;
@@ -59,15 +57,13 @@ export class ProductFormComponent implements OnInit {
       weight: this.weight,
       color: this.color,
       cat_num: this.cat_num     
-    }    
-    // console.log(this.new_product); // TEST
+    }        
     this.productService.addProductData(this.new_product);
     this.clearForm();
     this.new_product={};    
     this.router.navigateByUrl('/products-table'); // redirect back to products table
   }  
   
-
   updateProduct() {
     if (this.product_id < 1) {
       console.log("updateProduct - Can't update product id 0");
@@ -82,8 +78,7 @@ export class ProductFormComponent implements OnInit {
         weight: this.weight,
         color: this.color,
         cat_num: this.cat_num  
-    };        
-    // console.log(product_data); // TEST
+    };            
     this.productService.updateProductData(product_data);    
     this.clearForm();   
     this.router.navigateByUrl('/products-table'); // redirect back to products table

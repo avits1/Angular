@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { OthersDataService } from '../others-data.service';
+import { OthersDataService } from '../services/others-data.service';
 import { ActivatedRoute } from '@angular/router';
 import {Router} from '@angular/router';
 
@@ -16,6 +16,7 @@ export class OtherFormComponent implements OnInit {
   amount = 0;
   credit = 0;  
   rec_id = 0;
+  // date_create;
 
   updated_id = "";
   new_other = {};
@@ -30,8 +31,7 @@ export class OtherFormComponent implements OnInit {
       this.rec_id = parseInt(this.updated_id); // also: Number()   
     }        
     if (this.rec_id > 0) {
-      let to_update = this.othersService.getOtherByID(this.rec_id);
-      // console.log("got object other number:" + to_update.acc_num);
+      let to_update = this.othersService.getOtherByID(this.rec_id);      
       if (to_update == null) {
         console.log("get other details by its ID - Failed !");
         return;
@@ -62,9 +62,9 @@ export class OtherFormComponent implements OnInit {
         credit: this.credit
     };    
     this.othersService.updateOtherData(other_data);
-    console.log("updateOther - updating other " + other_data.acc_num);
     this.clearForm();   
-    this.router.navigateByUrl('/others-comp'); // redirect back to others list/cubes
+    // redirect back to others list/cubes - like '/others-comp'
+    this.router.navigateByUrl('/route-to-others'); // route name from app-routing.module    
   }
 
   // Add Other !
@@ -74,8 +74,8 @@ export class OtherFormComponent implements OnInit {
       console.log("saveOther - missing values. can't save .. ");
       alert("saveOther - missing values. can't save .. ");
       return;
-    }
-    console.log("saveOther - started  for other num: " + this.acc_num);
+    }    
+    // var created_date = new Date();
     this.new_other = {
       id: 0, // Auto INC by DB !
       bank: this.bank,      
@@ -83,11 +83,13 @@ export class OtherFormComponent implements OnInit {
       acc_num: this.acc_num,
       amount: this.amount,
       credit: this.credit
+      // date_create: new Date()
     };        
     this.othersService.addOtherData(this.new_other);
     this.clearForm();
     this.new_other={};    
-    this.router.navigateByUrl('/others-comp'); // redirect to others list/cubes
+    // redirect to others list/cubes:
+    this.router.navigateByUrl('/route-to-others'); // route name from app-routing.module    
   }  
 
   clearForm() {

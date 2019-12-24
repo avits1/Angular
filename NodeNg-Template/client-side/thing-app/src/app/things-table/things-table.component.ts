@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ThingsDataService } from '../things-data.service';
+import { ThingsDataService } from '../services/things-data.service';
 
 @Component({
   selector: 'app-things-table',
@@ -8,22 +8,12 @@ import { ThingsDataService } from '../things-data.service';
 })
 export class ThingsTableComponent implements OnInit {
 
-  thingsArray:any = [];
-  thingserv_msg = "";
+  thingsArray:any = []; 
   constructor(private thingService: ThingsDataService) { }
 
-  ngOnInit() {
-    // this.thingService.currThingMsg.subscribe(thing_msg => this.thingserv_msg = thing_msg);
-    this.thingService.currThingMsg.subscribe((thing_msg) => 
-    {
-      this.thingserv_msg = thing_msg;
-      this.refreshTable();
-    });    
-    this.thingService.fetchAllThings();
-  }
-
-  refreshTable() {   
-    this.thingsArray = this.thingService.getAllThings();    
+  ngOnInit() {    
+    this.thingService.things_to_watch.subscribe( (thing_msg) => { this.thingsArray = thing_msg } );    
+    this.thingService.fetchAllThings();   
   }
 
   delThing(rec_id) {  

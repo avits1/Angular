@@ -7,42 +7,22 @@ import {Router} from '@angular/router';
 })
 export class ProdDataService {
 
-   // Observeble Service Message:
-   private msgProductSource = new BehaviorSubject('DEFAULT'); // default message
-   currProductMsg = this.msgProductSource.asObservable();
- 
-   changeProductMessage(product_msg: string) {
-     this.msgProductSource.next(product_msg)
-   }
- 
-   newMsgForProducts(msg) {    
-     this.changeProductMessage(msg);    
-   }
- 
-   products = [];   
-   insert_products_url = "http://localhost:3000/products/insert"; // POST
-   delete_products_url = "http://localhost:3000/products/delete"; // DELETE
-   update_products_url = "http://localhost:3000/products/update"; // PUT   
-   list_products_url = "http://localhost:3000/products/list"; // GET
- 
-   constructor(private router: Router) { }
-
+  private products_obs = new BehaviorSubject([]);
+  public products_to_watch = this.products_obs.asObservable();
    
-  getAllProducts(){    
-    return this.products;
-  }
-    
-  fetchAllProducts(){
-    // console.log("fetchAllProducts - started !")
-    let list_url = this.list_products_url;
+  products = [];     
+  products_url = "http://localhost:3000/products/"; // GET + POST + PUT + DELETE
+ 
+  constructor(private router: Router) { }
+       
+  fetchAllProducts(){    
+    let list_url = this.products_url;
     fetch(list_url)
         .then((res) => { return res.json(); })
         .then((res) => {                
             this.products = res.data;
-            // console.log("fetchAllProducts - fetch retrived all products:");
-            // console.log(this.products);            
             if (this.products.length > 0)
-              this.newMsgForProducts("PRODUCTS-TABLE UPDATED"); // table is updated
+              this.products_obs.next(res.data); // = products              
             else {
               // navigate to home
               alert("NO Products ! redirect to home");
@@ -56,7 +36,7 @@ export class ProdDataService {
   } 
   
   delProductData(pr_id) {        
-    fetch(this.delete_products_url, {
+    fetch(this.products_url, {
         method: "DELETE",        
         body: JSON.stringify({prod_id: pr_id}),
         headers: {
@@ -64,10 +44,7 @@ export class ProdDataService {
         } 
       })
       .then((res) => { return res.json(); })
-      .then((res) => {    
-          // let del_msg = res.message;
-          // console.log("delProductData - fetch deleted product with Id:" + pr_id);
-          // console.log(del_msg);
+      .then((res) => {              
           this.fetchAllProducts();                    
       })
       .catch(err => {
@@ -75,7 +52,6 @@ export class ProdDataService {
           console.log(err);              
       })
   }
-
   
   getProductByID(pid:number) {
     let to_update: any = {};
@@ -88,10 +64,8 @@ export class ProdDataService {
     return null;
   }
 
-  addProductData(new_product) {                
-    // console.log("addProductData - fetch started !")
-
-    fetch(this.insert_products_url, {
+  addProductData(new_product) {                    
+    fetch(this.products_url, {
       method: "POST",  
       body: JSON.stringify({
               prod_id: 0, // Auto INC by DB !
@@ -105,11 +79,7 @@ export class ProdDataService {
       } 
     })
     .then((res) => { return res.json(); })
-    .then((res) => {    
-        // let add_msg = res.message;
-        // console.log("addProductData - fetch added new product");
-        // console.log(add_msg);
-        
+    .then((res) => {                    
         this.fetchAllProducts();                
     })
     .catch(err => {
@@ -118,10 +88,8 @@ export class ProdDataService {
     })
   }           
 
-
-  updateProductData(product_data) {    
-    // console.log("updateProductData - fetch started for product " + product_data.product_name + " !");
-    fetch(this.update_products_url, {
+  updateProductData(product_data) {        
+    fetch(this.products_url, {
       method: "PUT",  
       body: JSON.stringify({
               prod_id: product_data.prod_id,
@@ -135,9 +103,7 @@ export class ProdDataService {
       } 
     })
     .then((res) => { return res.json(); })
-    .then((res) => {            
-        // let update_msg = res.message;        
-        // console.log(update_msg);
+    .then((res) => {                    
         this.fetchAllProducts();               
     })
     .catch(err => {
@@ -145,5 +111,4 @@ export class ProdDataService {
         console.log(err);              
     })
   }
-
 }

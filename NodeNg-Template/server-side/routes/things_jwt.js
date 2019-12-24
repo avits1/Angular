@@ -1,6 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var thing_response = require('../modules/thing_response');
+var client_response = require('../modules/client_response');
 var con = require('../modules/connection').getConnection();
 var jwt = require('jsonwebtoken');
 
@@ -22,14 +22,14 @@ router.post('/login', (req, res, next) => {
   
     if (err_fields.length > 0) {
         // something is missing...
-        thing_response.setResponse(false, false, " something is missing...", err_fields);
-        res.json(thing_response.getData());
+        client_response.setResponse(false, false, " something is missing...", err_fields);
+        res.status(400).json(client_response.getData());
     } else {   
         con.query(`SELECT * FROM things t WHERE t.email=? AND t.password=?`, [email, password], function (err, things_logins, fields) {
             if (err) {
                 console.log(err);
-                thing_response.setResponse(false, true, "There Was an Error Login to Thing On DB...", err);
-                res.json(thing_response.getData());
+                client_response.setResponse(false, true, "There Was an Error Login to Thing On DB...", err);
+                res.status(500).json(client_response.getData());
                 return;
             }
 
@@ -41,12 +41,12 @@ router.post('/login', (req, res, next) => {
                 var token = jwt.sign(payload, secret);
                 let arr_token = [token];
 
-                thing_response.setResponse(true, false, "Thing Logined Succesfully", arr_token);
-                res.json(thing_response.getData());
+                client_response.setResponse(true, false, "Thing Logined Succesfully", arr_token);
+                res.status(200).json(client_response.getData());
             }
             else { // Login Failed !
-                thing_response.setResponse(false, false, "Thing failed to login ! ", []);
-                res.json(thing_response.getData());
+                client_response.setResponse(false, false, "Thing failed to login ! ", []);
+                res.status(401).json(client_response.getData()); /// code 401 - Unauthorized // 403 - Forbidden
             }            
         });
     }        
@@ -56,10 +56,10 @@ router.post('/login', (req, res, next) => {
 /* GET things. */
 router.get('/admin', function (req, res, next) {     
 //   console.log("NodeJS Server - router.get() - Things List");
-  thing_response.clear();   
+  client_response.clear();   
   if (!req.query.token) {    
-    thing_response.setResponse(true, false, "Get Things - no Token Sent", []);
-    res.json(thing_response.getData());
+    client_response.setResponse(true, false, "Get Things - no Token Sent", []);
+    res.status(400).json(client_response.getData());
     return;
   }
     
@@ -69,48 +69,49 @@ router.get('/admin', function (req, res, next) {
   try {
       decoded = jwt.verify(req.query.token, secret);
   } catch (err) {    
-      thing_response.setResponse(false, true, "Wrong Token, Data Invalid!!", err);
-      res.json(thing_response.getData());
+      client_response.setResponse(false, true, "Wrong Token, Data Invalid!!", err);
+      res.status(400).json(client_response.getData());
       return;
   }
 //   console.log(decoded);
-  thing_response.clear();  
+  client_response.clear();  
 //   console.log("router.get - doing SELECT ..");
 
   // con.query("SELECT * FROM users u left join jobs j on j.jobID = u.jobID left join cars c on c.carID = j.carID", function (err, users, fields) {
   con.query(`SELECT * FROM things t LEFT JOIN others o ON t.thing_id = o.id `, function (err, things, fields) {    
       if (err) {
           console.log(err);
-          thing_response.setResponse(false, true, "There Was an Error...", err);
-          res.json(thing_response.getData());
+          client_response.setResponse(false, true, "There Was an Error...", err);
+          res.status(500).json(client_response.getData());
           return;
       }
-      thing_response.setResponse(true, false, "Things List", things);
-      res.json(thing_response.getData());
+      client_response.setResponse(true, false, "Things List", things);
+      res.status(things.length?200:204).json(client_response.getData());
   });
 });
 
 
 /* GET = Home Page = things partial details list. */
 router.get('/home', function (req, res, next) {     
-    thing_response.clear();   
+    client_response.clear();   
    
     // con.query("SELECT * FROM users u left join jobs j on j.jobID = u.jobID left join cars c on c.carID = j.carID", function (err, users, fields) {
-    con.query(`SELECT  t.rec_id, t.name , t.phone FROM things t `, function (err, thingss_home, fields) {    
+    con.query(`SELECT  t.rec_id, t.name , t.phone FROM things t `, function (err, things_home, fields) {    
         if (err) {
             console.log(err);
-            thing_response.setResponse(false, true, "There Was an Error...", err);
-            res.json(thing_response.getData());
+            client_response.setResponse(false, true, "There Was an Error...", err);
+            res.status(500).json(client_response.getData());
             return;
         }
-        thing_response.setResponse(true, false, "Things Home List - Partial", things_home);
-        res.json(thing_response.getData());
+        client_response.setResponse(true, false, "Things Home List - Partial", things_home);
+        res.status(things_home.length?200:204).json(client_response.getData());
     });
   });
   
   
 // Insert Thing
-router.put('/insert', (req, res, next) => {
+// router.post('/insert', (req, res, next) => {
+router.post('/', (req, res, next) => {    
   var thing_name = (req.body.thing_name) ? req.body.thing_name : "";
   var thing_id = (req.body.thing_id) ? req.body.thing_id : 0;
   var phone = (req.body.phone) ? req.body.phone : "";
@@ -137,19 +138,24 @@ router.put('/insert', (req, res, next) => {
  
   if (err_fields.length > 0) {
       // something is missing...
-      thing_response.setResponse(false, false, " something is missing...", err_fields);
-      res.json(thing_response.getData());
+      client_response.setResponse(false, false, " something is missing...", err_fields);
+      res.status(400).json(client_response.getData());
   } else {
       // Enter New Thing...      
-      var ret = con.query(`INSERT INTO things (thing_name,thing_id,phone,email,password,other_id) VALUES (?,?,?,?,?,?)`, [thing_name, thing_id, phone, email, password, other_id], function (err, things, fields) {
+      var ret = con.query(`INSERT INTO things (thing_name,thing_id,phone,email,password,other_id) VALUES (?,?,?,?,?,?)`, [thing_name, thing_id, phone, email, password, other_id], function (err, result, fields) {
           if (err) {
               console.log(err);
-              thing_response.setResponse(false, true, "There Was an Error Adding Thing To DB...", err);
-              res.json(thing_response.getData());
+              client_response.setResponse(false, true, "There Was an Error Adding Thing To DB...", err);
+              res.status(500).json(client_response.getData());
               return;
           }          
-          thing_response.setResponse(true, false, "Thing Was Added Succesfully", []);
-          res.json(thing_response.getData());          
+          if (result.affectedRows > 0) {
+            client_response.setResponse(true, false, "Thing Was Added Succesfully", []);
+            res.status(200).json(client_response.getData());          
+            return;
+          }
+          client_response.setResponse(false, false, "Can't Add New Thing - Check Data !", []);
+          res.status(500).json(client_response.getData());          
       });
   }
 
@@ -158,7 +164,8 @@ router.put('/insert', (req, res, next) => {
 
 
 // Delete Thing
-router.delete('/delete', function (req, res, next) {
+// router.delete('/delete', function (req, res, next) {
+router.delete('/', function (req, res, next) {    
   var err_fields = [];  
   var recID = (req.body.recID) ? req.body.recID : 0;
 
@@ -166,28 +173,34 @@ router.delete('/delete', function (req, res, next) {
       err_fields.push("thing Record ID NOT Selected");
   }
 
-  thing_response.clear();
+  client_response.clear();
   if (err_fields.length > 0) {
       // something is missing...
-      thing_response.setResponse(false, false, " something is missing...", err_fields);
-      res.json(thing_response.getData());
+      client_response.setResponse(false, false, " something is missing...", err_fields);
+      res.status(400).json(client_response.getData());
   } else {
       // con.query(`DELETE FROM users Where userID = ${userID}`, function (err, users, fields) {
-         con.query(`DELETE FROM things Where rec_id = ? `, [recID], function (err, things, fields) {
+         con.query(`DELETE FROM things Where rec_id = ? `, [recID], function (err, result, fields) {
           if (err) {
               console.log(err);
-              thing_response.setResponse(false, true, "There Was an Error...", err);
-              res.json(thing_response.getData());
+              client_response.setResponse(false, true, "There Was an Error...", err);
+              res.status(500).json(client_response.getData());
               return;
           }
-          thing_response.setResponse(true, false, "Bank Thing was Deleted...", []);
-          res.json(thing_response.getData());
+          if (result.affectedRows > 0) {
+            client_response.setResponse(true, false, "Bank Thing was Deleted...", []);
+            res.status(200).json(client_response.getData());
+            return;
+          }        
+          client_response.setResponse(false, false, "NO Thing To Delete !", []);
+          res.status(500).json(client_response.getData());
       });
   }
 });
 
 // Update Thing
-router.post('/update', (req, res, next) => {  
+// router.put('/update', (req, res, next) => {  
+router.put('/', (req, res, next) => {      
   var recID = (req.body.recID) ? req.body.recID : 0;
   var thing_name = (req.body.thing_name) ? req.body.thing_name : "";
   var thing_id = (req.body.thing_id) ? req.body.thing_id : 0;
@@ -218,19 +231,24 @@ router.post('/update', (req, res, next) => {
 
   if (err_fields.length > 0) {
       // something is missing...
-      thing_response.setResponse(false, false, " something is missing...", err_fields);
-      res.json(thing_response.getData());
+      client_response.setResponse(false, false, " something is missing...", err_fields);
+      res.status(400).json(client_response.getData());
   } else {
       // Update Thing ...
-      con.query(`UPDATE things SET thing_name=?,thing_id=?,phone=?,email=?,password=?,other_id=? WHERE rec_id=?`, [thing_name, thing_id, phone, email, password, other_id, recID], function (err, things, fields) {
+      con.query(`UPDATE things SET thing_name=?,thing_id=?,phone=?,email=?,password=?,other_id=? WHERE rec_id=?`, [thing_name, thing_id, phone, email, password, other_id, recID], function (err, result, fields) {
           if (err) {
               console.log(err);
-              thing_response.setResponse(false, true, "There Was an Error Updating Thing To DB...", err);
-              res.json(thing_response.getData());
+              client_response.setResponse(false, true, "There Was an Error Updating Thing To DB...", err);
+              res.status(500).json(client_response.getData());
               return;
           }
-          thing_response.setResponse(true, false, "Thing was Updated Succesfully", []);
-          res.json(thing_response.getData());
+          if (result.affectedRows > 0) {
+            client_response.setResponse(true, false, "Thing was Updated Succesfully", []);
+            res.status(200).json(client_response.getData());
+            return;
+          }
+          client_response.setResponse(false, false, "NO Thing To Update !", []);
+          res.status(500).json(client_response.getData()); 
       });
   }
 

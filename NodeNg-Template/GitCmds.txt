@@ -30,6 +30,11 @@ $ git merge remotename/branchname
 # Merges updates made online with your local work
 
 -------
+> git status
+shows what is the status before commit - changed and untracked files ..
+
+IMPORTANT! before doing GIT ADD , try first:
+> git add some-folder/some2/ --dry-run => to see what files will be added (!)
 
 List all files in git Repo / already committed:
 > git ls-tree -r master --name-only
@@ -45,4 +50,12 @@ uncommoit to last or chosen commiit:
 > git reset --soft [HEAD / 123abc .. ]
 OR:
 > git reset  [HEAD / 123abc .. ]
+
+forget last changes, before commit:
+> git reset
+
+remove file from the Git Repo only:
+git rm --cached file1.txt
+git commit -m "remove file1.txt"
+
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ThingsDataService } from '../things-data.service';
+import { ThingsDataService } from '../services/things-data.service';
 // import { ActivatedRoute } from '@angular/router';
 // import {Router} from '@angular/router';
 
@@ -37,11 +37,8 @@ export class LoginFormComponent implements OnInit {
     //   phone: this.phone,
       email: this.email,
       password: this.password
-    };        
-    console.log("loginThing - call  thingService.loginThing()");
-    console.log(this.login_thing); // TEST
-    this.thingService.loginThing(this.login_thing);
-    // alert("LOGIN CLIENT, EMAIL:" + this.email);
+    };                
+    this.thingService.loginThing(this.login_thing);    
     this.clearForm();
     this.login_thing={};    
     // this.router.navigateByUrl('/things-table'); // redirect back to things table

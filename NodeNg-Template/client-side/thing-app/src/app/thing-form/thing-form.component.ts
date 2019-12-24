@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ThingsDataService } from '../things-data.service';
-import { OthersDataService } from '../others-data.service';
+import { ThingsDataService } from '../services/things-data.service';
+import { OthersDataService } from '../services/others-data.service';
 import { ActivatedRoute } from '@angular/router';
 import {Router} from '@angular/router';
 
@@ -18,26 +18,21 @@ export class ThingFormComponent implements OnInit {
   password = "";
   other_id = 0;
   rec_id = 0;
+// date_create;
 
   updated_id = "";
   new_thing = {};
   others_select = [];
-
-  // thingserv_msg = "";
-  acountserv_msg = "";  
-
+  
   constructor(private thingService: ThingsDataService, private otherService: OthersDataService,
                    private route: ActivatedRoute, private router: Router) { }
 
   ngOnInit() {
-    // this.thingService.currThingMsg.subscribe(thing_msg => this.thingserv_msg = thing_msg); 
-
-    this.otherService.currOtherMsg.subscribe((other_msg) => 
-    {
-      this.acountserv_msg = other_msg;
-      this.refreshSelect();
-    });     
-
+    /// Shorter Imp for Observable use - with direct assignment:
+    // this.thingService.things_to_watch.subscribe( (thing_msg) => { this.things_select = thing_msg } );   
+    this.otherService.others_to_watch.subscribe( (other_msg) => { this.others_select = other_msg } );       
+    this.refreshSelect();
+       
     this.updated_id = this.route.snapshot.paramMap.get('rec_id');         
     if (this.updated_id != null) {
       this.rec_id = parseInt(this.updated_id); // also: Number()   
@@ -48,12 +43,10 @@ export class ThingFormComponent implements OnInit {
         console.log("get thing details by its ID - Failed !");
         return;
       }  
-      // console.log("got object thing named:" + to_update.thing_name
-      //          + " linked to other id: " +  to_update.other_id);      
-
+     
       // Fill The Form 
       this.thing_name = to_update.thing_name;
-      this.thing_id = to_update.thing_id;  // ID = TZ
+      this.thing_id = to_update.thing_id; 
       this.phone = to_update.phone;
       this.email = to_update.email;
       this.password = to_update.password;
@@ -74,7 +67,7 @@ export class ThingFormComponent implements OnInit {
     let thing_data = {
         recID: this.rec_id, 
         thing_name: this.thing_name,
-        thing_id: this.thing_id,  // ID = TZ
+        thing_id: this.thing_id, 
         phone: this.phone,
         email: this.email,
         password: this.password,
@@ -82,7 +75,7 @@ export class ThingFormComponent implements OnInit {
     };        
     this.thingService.updateThingData(thing_data);    
     this.clearForm();   
-    this.router.navigateByUrl('/things-table'); // redirect back to things table
+    this.router.navigateByUrl('/route-to-things'); // route name from app-routing.module    
   }
 
   saveThing() {           
@@ -91,25 +84,25 @@ export class ThingFormComponent implements OnInit {
       alert("saveThing - missing values. can't save .. ");
       return;
     }
+    // var created_date = new Date();
     this.new_thing = {
       rec_id: 0, // Auto INC by DB !
       thing_name: this.thing_name,      
-      thing_id: this.thing_id, // ID = TZ
+      thing_id: this.thing_id,
       phone: this.phone,
       email: this.email,
       password: this.password,
       other_id: this.other_id
-    }    
-    console.log(this.new_thing); // TEST
+      // date_create: new Date()
+    }        
     this.thingService.addThingData(this.new_thing);
     this.clearForm();
     this.new_thing={};    
-    this.router.navigateByUrl('/things-table'); // redirect back to things table
+    this.router.navigateByUrl('/route-to-things'); // route name from app-routing.module    
   }  
 
-  refreshSelect() {
-    // console.log("refreshSelect done by getUnattachedOthers()");
-    this.others_select = this.otherService.getUnattachedOthers();    
+  refreshSelect() {        
+    this.otherService.fetchUnattachedOthers(0);        
   }
 
   clearForm() {
